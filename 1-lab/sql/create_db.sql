@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS booked_places (
     booking_id INT,
     FOREIGN KEY (booking_id)
         REFERENCES bookings(booking_id)
-        ON DELETE NO ACTION,
+        ON DELETE CASCADE,
     place_number INT,
     PRIMARY KEY (booking_id, place_number)
 );
@@ -62,3 +62,8 @@ VALUES (1, '2019-09-18 16:00:00', '2019-09-18 18:00:00', 120, TRUE),
 
 INSERT INTO bookings (show_id, first_name, last_name, email, phone_number)
 VALUES (1, 'Vladyslav', 'Mokrousov', 'elminsteraumar4@gmail.com', '+380939826288');
+
+
+SELECT * FROM movie_shows WHERE film_id=1 AND start_time='2019-09-18 16:00:00';
+SELECT * FROM bookings;
+SELECT * FROM booked_places;

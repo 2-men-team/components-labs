@@ -33,12 +33,13 @@ public class Booking {
   public Booking() {
   }
 
-  public Booking(int showId, String firstName, String lastName, String email, String phoneNumber) {
+  public Booking(int showId, String firstName, String lastName, String email, String phoneNumber, List<Place> places) {
     this.showId = showId;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.phoneNumber = phoneNumber;
+    this.places = places;
   }
 
   public static class Builder {
@@ -48,6 +49,7 @@ public class Booking {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private List<Place> places;
 
     public Builder setShowId(int showId) {
       this.showId = showId;
@@ -74,8 +76,13 @@ public class Booking {
       return this;
     }
 
+    public Builder setPlaces(List<Place> places) {
+      this.places = places;
+      return this;
+    }
+
     public Booking build() {
-      return new Booking(showId, firstName, lastName, email, phoneNumber);
+      return new Booking(showId, firstName, lastName, email, phoneNumber, places);
     }
   }
 

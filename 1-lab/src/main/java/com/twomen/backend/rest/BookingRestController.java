@@ -39,11 +39,11 @@ public class BookingRestController {
 
   @PostMapping("/shows")
   MovieShow getMovieShow(@RequestParam("name") String name,
-                         @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date date) {
+                         @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date) {
     MovieShow show = service.getMovieShow(name, date);
 
     if (show == null) {
-      throw new RuntimeException("Movie show not found.");
+      throw new NotFoundException("Movie show not found.");
     }
 
     return show;
@@ -57,7 +57,7 @@ public class BookingRestController {
     @RequestParam String phoneNumber,
     @RequestParam String film,
     @RequestParam List<Integer> places,
-    @RequestParam Date date) {
+    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date) {
 
     Booking.Builder builder = new Booking.Builder();
 
@@ -65,24 +65,25 @@ public class BookingRestController {
       .setFirstName(firstName)
       .setLastName(lastName)
       .setEmail(email)
-      .setPhoneNumber(phoneNumber);
-
+      .setPhoneNumber(phoneNumber)
+      .setPlaces(Place.convert(places));
 
     MovieShow show = service.getMovieShow(film, date);
 
     if (show == null) {
-      throw new RuntimeException("Show was not found."); // TODO: add ShowNotFoundException() and @ExceptionHandler
+      throw new NotFoundException("Movie show was not found.");
     }
 
     if (!show.isActive()) {
-      throw new RuntimeException("Show has no free places.");
+      throw new NotFoundException("Show has no free places.");
     }
 
     for (Integer num : places) {
       Place place = new Place(num);
       if (place.getPlaceNumber() < 0 || place.getPlaceNumber() > 90) {
-      //if (!show.getPlaces().contains(place)) {
-        throw new RuntimeException("Asked place " + place + " is not available.");
+        if (!show.getPlaces().contains(place)) {
+          throw new NotFoundException("Asked place " + place + " is not available.");
+        }
       }
     }
 

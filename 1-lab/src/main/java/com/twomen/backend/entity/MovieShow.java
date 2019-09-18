@@ -1,5 +1,7 @@
 package com.twomen.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -29,9 +31,10 @@ public class MovieShow {
   @Column(name = "is_active")
   private boolean isActive;
 
-  //@OneToMany(fetch = FetchType.LAZY)
-  //@JoinColumn(name = "show_id", table = "free_places")
-  //private List<Place> places;
+  @JsonIgnore
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "show_id")
+  private List<Place> places;
 
   public MovieShow() {
   }
@@ -90,6 +93,14 @@ public class MovieShow {
 
   public void setActive(boolean active) {
     isActive = active;
+  }
+
+  public List<Place> getPlaces() {
+    return places;
+  }
+
+  public void setPlaces(List<Place> places) {
+    this.places = places;
   }
 
   /*
