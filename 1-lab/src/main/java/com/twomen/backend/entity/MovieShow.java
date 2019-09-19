@@ -10,6 +10,7 @@ import java.util.List;
 @Table(name = "movie_shows")
 public class MovieShow {
   @Id
+  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "show_id")
   private int id;

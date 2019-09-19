@@ -5,11 +5,17 @@ import com.twomen.backend.entity.Film;
 import com.twomen.backend.entity.MovieShow;
 import com.twomen.backend.entity.Place;
 import com.twomen.backend.rest.NotFoundException;
+import com.twomen.backend.specification.Specification;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.query.Query;
 
 import java.text.DateFormat;
@@ -110,6 +116,7 @@ public class BookingDAOImpl implements BookingDAO {
     }
   }
 
+  @Override
   public List<Place> getBookedPlaces(int showId) {
     Session session = manager.unwrap(Session.class);
     Query<Booking> query = session.createQuery("from Booking where show_id=:showId", Booking.class);
@@ -133,5 +140,23 @@ public class BookingDAOImpl implements BookingDAO {
     Query query = session.createQuery("delete from Booking where booking_id=:bookingId");
     query.setParameter("bookingId", id);
     query.executeUpdate();
+  }
+
+  @Override
+  public List<Booking> getBookingByPhone(String phone) {
+    Session session = manager.unwrap(Session.class);
+    Query<Booking> query = session.createQuery("from Booking where phone_number=:phone", Booking.class);
+    query.setParameter("phone", phone);
+    return query.getResultList();
+  }
+
+  public <T> List<T> findAllBySpecification(Specification<T> specification) {
+    CriteriaBuilder builder = manager.getCriteriaBuilder();
+    CriteriaQuery<T> query = builder.createQuery(specification.getType());
+    Root<T> root = query.from(specification.getType());
+
+    Predicate predicate = specification.toPredicate(root, builder);
+    query.where(predicate);
+    return manager.createQuery(query).getResultList();
   }
 }

@@ -1,11 +1,14 @@
 package com.twomen.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "films")
 public class Film {
   @Id
+  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "film_id")
   private int id;

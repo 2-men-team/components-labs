@@ -4,6 +4,8 @@ import com.twomen.backend.entity.Booking;
 import com.twomen.backend.entity.Film;
 import com.twomen.backend.entity.MovieShow;
 import com.twomen.backend.persistence.BookingDAO;
+import com.twomen.backend.specification.MatchesKeyWords;
+import com.twomen.backend.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +14,11 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class BookingServiceImpl implements BookingService {
+public class BookingServiceFacadeImpl implements BookingServiceFacade {
   private final BookingDAO dao;
 
   @Autowired
-  public BookingServiceImpl(BookingDAO dao) {
+  public BookingServiceFacadeImpl(BookingDAO dao) {
     this.dao = dao;
   }
 
@@ -45,11 +47,6 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public MovieShow getMovieShowById(int id) {
-    return dao.getMovieShowById(id);
-  }
-
-  @Override
   @Transactional
   public void makeBooking(Booking info) {
     info.setId(0);
@@ -58,7 +55,19 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @Transactional
+  public List<Booking> getBookingByPhone(String phone) {
+    return dao.getBookingByPhone(phone);
+  }
+
+  @Override
+  @Transactional
   public void deleteBooking(int id) {
     dao.deleteBooking(id);
+  }
+
+  @Override
+  public List<Film> findAllByKeyWords(List<String> keyWords) {
+    Specification<Film> specification = new MatchesKeyWords(keyWords);
+    return dao.findAllBySpecification(specification);
   }
 }

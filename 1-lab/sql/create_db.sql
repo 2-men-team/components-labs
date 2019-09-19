@@ -67,3 +67,5 @@ VALUES (1, 'Vladyslav', 'Mokrousov', 'elminsteraumar4@gmail.com', '+380939826288
 SELECT * FROM movie_shows WHERE film_id=1 AND start_time='2019-09-18 16:00:00';
 SELECT * FROM bookings;
 SELECT * FROM booked_places;
+SELECT * FROM films;
+SELECT * FROM films WHERE film_name LIKE '%Gump%';

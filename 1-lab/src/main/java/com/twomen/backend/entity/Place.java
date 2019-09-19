@@ -1,5 +1,7 @@
 package com.twomen.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ public class Place implements Serializable {
   private static final long serialVersionUID = -7627696889364515583L;
 
   @Id
+  @JsonIgnore
   @Column(name = "booking_id")
   private int id;
 
