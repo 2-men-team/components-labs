@@ -1,20 +1,23 @@
 package com.twomen.backend.rest;
 
-import com.twomen.backend.entity.Booking;
-import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.MovieShow;
-import com.twomen.backend.entity.Place;
+import com.twomen.backend.entity.*;
 import com.twomen.backend.service.BookingServiceFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class BookingRestController {
+  private static final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
   private final BookingServiceFacade service;
 
   @Autowired
@@ -38,53 +41,36 @@ public class BookingRestController {
   }
 
   @PostMapping("/shows")
-  MovieShow getMovieShow(@RequestParam("name") String name,
-                         @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date) {
-    MovieShow show = service.getMovieShow(name, date);
-
-    if (show == null) {
-      throw new NotFoundException("Movie show not found.");
-    }
-
-    return show;
+  MovieShow getMovieShow(@RequestBody Map<String, String> keys) throws ParseException {
+    String name = keys.get("name");
+    Date date = formatter.parse(keys.get("date"));
+    return service.getMovieShow(name, date);
   }
 
-  @PostMapping("/bookings")
-  Booking makeBooking(
-    @RequestParam String firstName,
-    @RequestParam String lastName,
-    @RequestParam String email,
-    @RequestParam String phoneNumber,
-    @RequestParam String film,
-    @RequestParam List<Integer> places,
-    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date) {
-
-    List<Place> placeList = Place.convert(places);
+  @PostMapping("/bookings/{date}")
+  Booking makeBooking(@RequestBody BookingDTO info, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date) {
+    List<Place> placeList = Place.convert(info.getPlaces());
     Booking.Builder builder = new Booking.Builder();
 
     builder
-      .setFirstName(firstName)
-      .setLastName(lastName)
-      .setEmail(email)
-      .setPhoneNumber(phoneNumber)
+      .setFilmName(info.getFilm())
+      .setFirstName(info.getFirstName())
+      .setLastName(info.getLastName())
+      .setEmail(info.getEmail())
+      .setPhoneNumber(info.getPhoneNumber())
       .setPlaces(placeList);
 
     if (placeList.isEmpty()) {
       throw new NotFoundException("No places passed.");
     }
 
-    MovieShow show = service.getMovieShow(film, date);
-
-    if (show == null) {
-      throw new NotFoundException("Movie show was not found.");
-    }
+    MovieShow show = service.getMovieShow(info.getFilm(), date);
 
     if (!show.isActive()) {
-      throw new NotFoundException("Show has no free places.");
+      throw new NotFoundException("Show is no longer active.");
     }
 
-    for (Integer num : places) {
-      Place place = new Place(num);
+    for (Place place : placeList) {
       if (place.getPlaceNumber() < 0 || place.getPlaceNumber() > 90) {
         if (!show.getPlaces().contains(place)) {
           throw new NotFoundException("Asked place " + place + " is not available.");
@@ -92,13 +78,12 @@ public class BookingRestController {
       }
     }
 
-    Booking info = builder
+    Booking booking = builder
       .setShowId(show.getId())
       .build();
 
-    service.makeBooking(info);
-
-    return info;
+    service.makeBooking(booking);
+    return booking;
   }
 
   @GetMapping("/bookings/{phone}")
@@ -109,11 +94,11 @@ public class BookingRestController {
   @DeleteMapping("/bookings/{id}")
   String deleteBooking(@PathVariable int id) {
     service.deleteBooking(id);
-    return "Delete booking " + id;
+    return "Query executed.";
   }
 
   @PostMapping("/films")
-  List<Film> findAllFilms(@RequestParam("keys") List<String> keyWords) {
-    return service.findAllByKeyWords(keyWords);
+  List<Film> findAllFilms(@RequestBody SearchQuery query) {
+    return service.findAllByKeyWords(query.getKeys());
   }
 }

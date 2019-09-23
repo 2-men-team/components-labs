@@ -9,12 +9,17 @@ import java.util.List;
 @Table(name = "bookings")
 public class Booking {
   @Id
+  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "booking_id")
   private int id;
 
+  @JsonIgnore
   @Column(name = "show_id")
   private int showId;
+
+  @Transient
+  private String filmName;
 
   @Column(name = "first_name")
   private String firstName;
@@ -29,14 +34,15 @@ public class Booking {
   private String phoneNumber;
 
   @OneToMany(fetch = FetchType.EAGER)
-  @JoinColumn(name = "booking_id") // add referencedColumnName?
+  @JoinColumn(name = "booking_id")
   private List<Place> places;
 
   public Booking() {
   }
 
-  public Booking(int showId, String firstName, String lastName, String email, String phoneNumber, List<Place> places) {
+  public Booking(int showId, String filmName, String firstName, String lastName, String email, String phoneNumber, List<Place> places) {
     this.showId = showId;
+    this.filmName = filmName;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
@@ -47,6 +53,7 @@ public class Booking {
   public static class Builder {
     private int id;
     private int showId;
+    private String filmName;
     private String firstName;
     private String lastName;
     private String email;
@@ -78,14 +85,27 @@ public class Booking {
       return this;
     }
 
+    public Builder setFilmName(String filmName) {
+      this.filmName = filmName;
+      return this;
+    }
+
     public Builder setPlaces(List<Place> places) {
       this.places = places;
       return this;
     }
 
     public Booking build() {
-      return new Booking(showId, firstName, lastName, email, phoneNumber, places);
+      return new Booking(showId, filmName, firstName, lastName, email, phoneNumber, places);
     }
+  }
+
+  public String getFilmName() {
+    return filmName;
+  }
+
+  public void setFilmName(String filmName) {
+    this.filmName = filmName;
   }
 
   public int getId() {

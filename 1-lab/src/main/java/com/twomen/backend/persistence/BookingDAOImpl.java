@@ -50,42 +50,25 @@ public class BookingDAOImpl implements BookingDAO {
   }
 
   @Override
-  public List<MovieShow> getMovieShowsByFilm(String film) {
+  public List<MovieShow> getMovieShowsByFilm(String filmName) {
     Session session = manager.unwrap(Session.class);
-
-    Query<Film> query = session.createQuery("from Film where film_name=:film", Film.class);
-    query.setParameter("film", film);
-    int id = query.getSingleResult().getId(); // TODO: CHECK IF FILM EXISTS
-
+    int id = getFilmById(filmName);
     Query<MovieShow> movieQuery = session.createQuery("from MovieShow where film_id=:filmId", MovieShow.class);
     movieQuery.setParameter("filmId", id);
-
-    List<MovieShow> list = movieQuery.getResultList();
-    System.out.println(list);
-    return list;
+    return movieQuery.getResultList();
   }
 
   @Override
-  public MovieShow getMovieShow(String film, Date date) {
+  public MovieShow getMovieShow(String filmName, Date date) {
     Session session = manager.unwrap(Session.class);
-
-    Query<Film> query = session.createQuery("from Film where film_name=:film", Film.class);
-    query.setParameter("film", film);
-    int id = query.getSingleResult().getId();
+    int id = getFilmById(filmName);
 
     Query<MovieShow> movieQuery = session.createQuery(
       "from MovieShow where film_id=:filmId and start_time=:date", MovieShow.class);
 
     movieQuery.setParameter("filmId", id);
     movieQuery.setParameter("date", formatter.format(date));
-
-    List<MovieShow> movies = movieQuery.getResultList();
-
-    if (movies.isEmpty()) {
-      return null;
-    } else {
-      return movies.get(0);
-    }
+    return getSingleResult(movieQuery, "Movie show for '" + filmName + "' at '" + date + "' was not found.");
   }
 
   @Override
@@ -126,12 +109,13 @@ public class BookingDAOImpl implements BookingDAO {
     List<Integer> ids = new ArrayList<>();
     bookings.forEach((i) -> ids.add(i.getId()));
 
-    if (ids.isEmpty()) {
+    if (ids.isEmpty())
       return new ArrayList<>();
-    }
 
-    String placeQuery = "from Place where booking_id in (:ids)";
-    return session.createQuery(placeQuery, Place.class).setParameterList("ids", ids).list();
+    return session
+      .createQuery("from Place where booking_id in (:ids)", Place.class)
+      .setParameterList("ids", ids)
+      .getResultList();
   }
 
   @Override
@@ -158,5 +142,21 @@ public class BookingDAOImpl implements BookingDAO {
     Predicate predicate = specification.toPredicate(root, builder);
     query.where(predicate);
     return manager.createQuery(query).getResultList();
+  }
+
+  private int getFilmById(String filmName) {
+    Session session = manager.unwrap(Session.class);
+    Query<Film> query = session.createQuery("from Film where film_name=:film", Film.class);
+    query.setParameter("film", filmName);
+    return getSingleResult(query,"No movie shows for " + filmName + "' found.").getId();
+  }
+
+  private static <T> T getSingleResult(Query<T> query, String message) {
+    List<T> result = query.getResultList();
+    if (result.isEmpty()) {
+      throw new NotFoundException(message);
+    } else {
+      return result.get(0);
+    }
   }
 }

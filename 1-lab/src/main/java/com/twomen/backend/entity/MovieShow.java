@@ -15,8 +15,13 @@ public class MovieShow {
   @Column(name = "show_id")
   private int id;
 
+  @JsonIgnore
   @Column(name = "film_id")
   private int filmId;
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "film_id", insertable = false, updatable = false)
+  private Film film;
 
   @Column(name = "start_time")
   @Temporal(TemporalType.TIMESTAMP)
@@ -104,14 +109,11 @@ public class MovieShow {
     this.places = places;
   }
 
-  /*
-  public List<Place> getPlaces() {
-    return places;
+  public Film getFilm() {
+    return film;
   }
 
-  public void setPlaces(List<Place> places) {
-    this.places = places;
+  public void setFilm(Film film) {
+    this.film = film;
   }
-
-   */
 }
