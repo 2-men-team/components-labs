@@ -24,13 +24,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 // CREATIONAL PATTERN
-@Repository
 public class BookingDAOImpl implements BookingDAO {
   private static final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   private EntityManager manager;
 
-  @Autowired
   public BookingDAOImpl(EntityManager manager) {
     this.manager = manager;
   }

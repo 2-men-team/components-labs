@@ -2,6 +2,7 @@ package com.twomen.backend.service;
 
 import com.twomen.backend.entity.*;
 import com.twomen.backend.persistence.BookingDAO;
+import com.twomen.backend.persistence.DAOFactory;
 import com.twomen.backend.rest.NotFoundException;
 import com.twomen.backend.specification.MatchesKeyWords;
 import com.twomen.backend.specification.Specification;
@@ -17,8 +18,8 @@ public class BookingServiceImpl implements BookingService {
   private final BookingDAO dao;
 
   @Autowired
-  public BookingServiceImpl(BookingDAO dao) {
-    this.dao = dao;
+  public BookingServiceImpl(DAOFactory factory) {
+    this.dao = factory.create();
   }
 
   @Override
