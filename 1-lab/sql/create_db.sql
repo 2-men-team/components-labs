@@ -19,15 +19,6 @@ CREATE TABLE IF NOT EXISTS movie_shows (
     is_active BOOL
 );
 
-CREATE TABLE IF NOT EXISTS free_places (
-    show_id INT,
-    FOREIGN KEY (show_id)
-        REFERENCES movie_shows(show_id)
-        ON DELETE NO ACTION,
-    place INT,
-    PRIMARY KEY (show_id, place)
-);
-
 CREATE TABLE IF NOT EXISTS bookings (
     booking_id INT PRIMARY KEY AUTO_INCREMENT,
     show_id INT,
@@ -48,7 +39,6 @@ CREATE TABLE IF NOT EXISTS booked_places (
     place_number INT,
     PRIMARY KEY (booking_id, place_number)
 );
-
 
 INSERT INTO films (film_name, film_desc)
 VALUES ('Forest gump', 'Brillian film with Tom hanks'),
