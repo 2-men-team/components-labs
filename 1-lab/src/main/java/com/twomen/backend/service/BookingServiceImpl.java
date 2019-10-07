@@ -16,16 +16,20 @@ import java.util.List;
 @Service
 public class BookingServiceImpl implements BookingService {
   private final BookingDAO dao;
+  private final DefaultProvider defaultProvider;
+  private final FilteredProvider filteredProvider;
 
   @Autowired
   public BookingServiceImpl(DAOFactory factory) {
     this.dao = factory.create();
+    this.defaultProvider = new DefaultProvider(this.dao);
+    this.filteredProvider = new FilteredProvider(this.dao);
   }
 
   @Override
   @Transactional
   public List<Film> getAllRunningFilms() {
-    return dao.getAllRunningFilms();
+    return defaultProvider.getAllData();
   }
 
   @Override
@@ -37,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
   @Override
   @Transactional
   public List<MovieShow> getMovieShowsByFilm(String film) {
-    return dao.getMovieShowsByFilm(film);
+    return defaultProvider.getDataByName(film);
   }
 
   @Override
@@ -102,6 +106,6 @@ public class BookingServiceImpl implements BookingService {
   @Override
   public List<Film> findAllByKeyWords(List<String> keyWords) {
     Specification<Film> specification = new MatchesKeyWords(keyWords);
-    return dao.findAllBySpecification(specification);
+    return filteredProvider.getFilteredData(specification);
   }
 }
