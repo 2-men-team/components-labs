@@ -1,3 +1,0 @@
-public not java
-
-public static int X = 5;
