@@ -11,6 +11,10 @@ public class SearchQuery {
   public SearchQuery() {
   }
 
+  public SearchQuery(List<String> keys) {
+    this.keys = keys;
+  }
+
   public List<String> getKeys() {
     return keys;
   }

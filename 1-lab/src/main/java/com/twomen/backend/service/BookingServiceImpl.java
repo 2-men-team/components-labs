@@ -3,6 +3,8 @@ package com.twomen.backend.service;
 import com.twomen.backend.entity.*;
 import com.twomen.backend.persistence.BookingDAO;
 import com.twomen.backend.persistence.DAOFactory;
+import com.twomen.backend.persistence.FilteredProvider;
+import com.twomen.backend.persistence.NonFilteredProvider;
 import com.twomen.backend.rest.NotFoundException;
 import com.twomen.backend.specification.MatchesKeyWords;
 import com.twomen.backend.specification.Specification;
@@ -16,16 +18,32 @@ import java.util.List;
 @Service
 public class BookingServiceImpl implements BookingService {
   private final BookingDAO dao;
+  private final FilteredProvider filteredProvider;
+  private final NonFilteredProvider nonFilteredProvider;
 
   @Autowired
-  public BookingServiceImpl(DAOFactory factory) {
+  public BookingServiceImpl(DAOFactory factory,
+                            FilteredProvider filteredProvider,
+                            NonFilteredProvider nonFilteredProvider) {
     this.dao = factory.create();
+    this.filteredProvider = filteredProvider;
+    this.nonFilteredProvider = nonFilteredProvider;
   }
 
   @Override
   @Transactional
   public List<Film> getAllRunningFilms() {
-    return dao.getAllRunningFilms();
+    List<Film> films = nonFilteredProvider.getAllFilms();
+    films.addAll(dao.getAllRunningFilms());
+    return films;
+  }
+
+  @Override
+  public List<Film> findAllByKeyWords(List<String> keyWords) {
+    Specification<Film> specification = new MatchesKeyWords(keyWords);
+    List<Film> films = dao.findAllBySpecification(specification);
+    films.addAll(filteredProvider.getFilmsByKeyWords(keyWords));
+    return films;
   }
 
   @Override
@@ -97,11 +115,5 @@ public class BookingServiceImpl implements BookingService {
   @Transactional
   public void deleteBooking(int id) {
     dao.deleteBooking(id);
-  }
-
-  @Override
-  public List<Film> findAllByKeyWords(List<String> keyWords) {
-    Specification<Film> specification = new MatchesKeyWords(keyWords);
-    return dao.findAllBySpecification(specification);
   }
 }

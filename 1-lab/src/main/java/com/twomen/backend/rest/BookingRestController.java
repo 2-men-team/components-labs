@@ -30,6 +30,11 @@ public class BookingRestController {
     return service.getAllRunningFilms();
   }
 
+  @PostMapping("/films")
+  List<Film> findAllFilms(@RequestBody SearchQuery query) {
+    return service.findAllByKeyWords(query.getKeys());
+  }
+
   @GetMapping("/films/{filmName}")
   List<MovieShow> getMovieShowsByFilm(@PathVariable String filmName) {
     return service.getMovieShowsByFilm(filmName);
@@ -61,10 +66,5 @@ public class BookingRestController {
   String deleteBooking(@PathVariable int id) {
     service.deleteBooking(id);
     return "Query executed.";
-  }
-
-  @PostMapping("/films")
-  List<Film> findAllFilms(@RequestBody SearchQuery query) {
-    return service.findAllByKeyWords(query.getKeys());
   }
 }

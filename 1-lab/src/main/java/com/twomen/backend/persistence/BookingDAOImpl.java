@@ -7,8 +7,6 @@ import com.twomen.backend.entity.Place;
 import com.twomen.backend.rest.NotFoundException;
 import com.twomen.backend.specification.Specification;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
