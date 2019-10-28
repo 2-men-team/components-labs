@@ -30,6 +30,11 @@ public class BookingRestController {
     return service.findAllFilmsByKeyWords(query.getKeys());
   }
 
+  @PostMapping("/perf")
+  List<PerfData> getPerfData(@RequestBody List<Integer> ids) {
+    return service.getPerfData(ids);
+  }
+
   /*
   // NEW
   @PostMapping("/search")

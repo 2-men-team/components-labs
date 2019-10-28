@@ -35,6 +35,11 @@ public class BookingRestController {
     return service.getFilmById(id);
   }
 
+  @GetMapping("/perf")
+  List<PerfData> getPerfData() {
+    return service.getPerfData();
+  }
+
   /*
   @GetMapping("/shows")
   List<MovieShow> getAllRunningMovieShows() {

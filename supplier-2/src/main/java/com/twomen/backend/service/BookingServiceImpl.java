@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,18 @@ public class BookingServiceImpl implements BookingService {
   @Transactional
   public Film getFilmById(int id) {
     return dao.getFilmById(id);
+  }
+
+  @Override
+  public List<PerfData> getPerfData() {
+    int n = 5000;
+    List<Integer> idxs = new ArrayList<>(n);
+
+    for (int i = 0; i < n; ++i) {
+      idxs.add((int) (Math.random() * n));
+    }
+
+    return dao.getPerfData(idxs);
   }
 
   /*

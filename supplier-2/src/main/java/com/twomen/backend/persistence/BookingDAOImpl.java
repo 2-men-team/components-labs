@@ -1,23 +1,13 @@
 package com.twomen.backend.persistence;
 
-import com.twomen.backend.entity.Booking;
 import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.MovieShow;
-import com.twomen.backend.entity.Place;
-import com.twomen.backend.rest.NotFoundException;
-import com.twomen.backend.specification.Specification;
+import com.twomen.backend.entity.PerfData;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 // CREATIONAL PATTERN
 public class BookingDAOImpl implements BookingDAO {
@@ -42,6 +32,14 @@ public class BookingDAOImpl implements BookingDAO {
     Query<Film> query = session.createQuery("from Film where film_id=:id", Film.class);
     query.setParameter("id", id);
     return query.getSingleResult();
+  }
+
+  @Override
+  public List<PerfData> getPerfData(List<Integer> idxs) {
+    Session session = manager.unwrap(Session.class);
+    Query<PerfData> query = session.createQuery("from PerfData where id in :idxs", PerfData.class);
+    query.setParameter("idxs", idxs);
+    return query.getResultList();
   }
 
   /*

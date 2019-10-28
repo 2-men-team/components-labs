@@ -1,9 +1,6 @@
 package com.twomen.backend.persistence;
 
-import com.twomen.backend.entity.Booking;
-import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.MovieShow;
-import com.twomen.backend.entity.Place;
+import com.twomen.backend.entity.*;
 import com.twomen.backend.rest.NotFoundException;
 import com.twomen.backend.specification.Specification;
 import org.hibernate.Session;
@@ -38,6 +35,14 @@ public class BookingDAOImpl implements BookingDAO {
     Predicate predicate = specification.toPredicate(root, builder);
     query.where(predicate);
     return manager.createQuery(query).getResultList();
+  }
+
+  @Override
+  public List<PerfData> getPerfData(List<Integer> ids) {
+    Session session = manager.unwrap(Session.class);
+    Query<PerfData> query = session.createQuery("from PerfData where id in :ids", PerfData.class);
+    query.setParameter("ids", ids);
+    return query.getResultList();
   }
 
   /*

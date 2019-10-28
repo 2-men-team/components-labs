@@ -1,17 +1,15 @@
 package com.twomen.backend.persistence;
 
-import com.twomen.backend.entity.Booking;
 import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.MovieShow;
-import com.twomen.backend.entity.Place;
-import com.twomen.backend.specification.Specification;
+import com.twomen.backend.entity.PerfData;
 
-import java.util.Date;
 import java.util.List;
 
 public interface BookingDAO {
   List<Film> getAllRunningFilms();
   Film getFilmById(int id);
+  List<PerfData> getPerfData(List<Integer> idxs);
+
   /*
   List<MovieShow> getAllRunningMovieShows();
   List<MovieShow> getMovieShowsByFilm(String film);

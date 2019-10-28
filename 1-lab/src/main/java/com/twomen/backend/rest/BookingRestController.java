@@ -25,6 +25,11 @@ public class BookingRestController {
     this.service = service;
   }
 
+  @PostMapping("/perf/{id}")
+  List<PerfData> getPerfData(@PathVariable int id, @RequestBody List<Integer> idxs) {
+    return service.getPerfData(id, idxs);
+  }
+
   @GetMapping("/films")
   List<Film> getAllRunningFilms() {
     return service.getAllRunningFilms();
