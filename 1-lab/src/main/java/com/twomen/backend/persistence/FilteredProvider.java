@@ -37,6 +37,7 @@ public class FilteredProvider {
   }
 
   public List<PerfData> getPerfData(List<Integer> idxs) {
+    long time = System.currentTimeMillis();
     List<PerfData> result = new ArrayList<>();
     List<Integer> request = new ArrayList<>();
 
@@ -50,13 +51,19 @@ public class FilteredProvider {
     }
 
     RestTemplate template = new RestTemplate();
-    List<PerfData> response = template.postForObject(SUPPLIER_URL + "/perf", request, List.class);
+    List<PerfData> response = Collections.emptyList();
+
+    if (!request.isEmpty()) {
+      response = template.postForObject(SUPPLIER_URL + "/perf", request, List.class);
+    }
 
     for (PerfData elem : response) {
       cache.put(elem.getId(), new CacheData(elem, LocalDate.now()));
     }
 
     result.addAll(response);
+
+    System.out.println("Response time (s): " + (System.currentTimeMillis() - time) * 1000);
     return result;
   }
 }
