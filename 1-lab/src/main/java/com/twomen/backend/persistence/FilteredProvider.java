@@ -45,7 +45,10 @@ public class FilteredProvider {
     for (String key : keyWords) {
       CacheData value = cache.get(key);
 
-      if (value == null || value.date.isBefore(LocalDate.now().minusDays(1))) {
+      if (value == null) {
+        request.add(key);
+      } else if (value.date.isBefore(LocalDate.now().minusDays(1))) {
+        cache.remove(key);
         request.add(key);
       } else {
         result.addAll(value.data);
@@ -53,12 +56,16 @@ public class FilteredProvider {
     }
 
     if (!request.isEmpty()) {
+      System.out.println(request.size());
+      System.out.println(keyWords.size());
       List<Film> response = makeRequest("/search-perf", keyWords);
+      // TODO: doesnt actually add anything to the cache: during debug response.size() == 0
       addToCache(request, response);
       result.addAll(response);
     }
 
-    System.out.println("Response time (s): " + (System.currentTimeMillis() - time) * 1000);
+    System.out.println(cache);
+    System.out.println("Response time (s): " + (System.currentTimeMillis() - time) / 1000);
     return new ArrayList<>(result);
   }
 
@@ -70,6 +77,7 @@ public class FilteredProvider {
 
         if (spec.isSatisfiedBy(film)) {
           CacheData value = cache.get(key);
+          System.out.println(key);
 
           if (value != null) value.data.add(film);
           else {
