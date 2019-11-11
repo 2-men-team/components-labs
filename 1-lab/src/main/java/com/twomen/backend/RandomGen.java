@@ -12,7 +12,7 @@ public class RandomGen {
       printer.println("insert into films (film_name, film_desc) values");
 
       for (int i = 1, n = 100000; i <= n; ++i) {
-        printer.printf("('%d', '%d')", i, i);
+        printer.printf("('filmName%d', 'filmDesc%d')", i, i);
         if (i == n) printer.println(";");
         else printer.println(",");
       }
