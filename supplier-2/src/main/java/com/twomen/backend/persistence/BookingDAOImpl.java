@@ -1,7 +1,6 @@
 package com.twomen.backend.persistence;
 
 import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.PerfData;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
@@ -35,10 +34,11 @@ public class BookingDAOImpl implements BookingDAO {
   }
 
   @Override
-  public List<PerfData> getPerfData(List<Integer> idxs) {
+  public List<Film> getFilmsBetweenIds(int from, int to) {
     Session session = manager.unwrap(Session.class);
-    Query<PerfData> query = session.createQuery("from PerfData where id in :idxs", PerfData.class);
-    query.setParameter("idxs", idxs);
+    Query<Film> query = session.createQuery("from Film where film_id between :a and :b", Film.class);
+    query.setParameter("a", from);
+    query.setParameter("b", to);
     return query.getResultList();
   }
 

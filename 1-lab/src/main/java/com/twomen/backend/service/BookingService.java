@@ -15,5 +15,6 @@ public interface BookingService {
   List<Booking> getBookingByPhone(String phone);
   void deleteBooking(int id);
   List<Film> findAllByKeyWords(List<String> keyWords);
-  List<PerfData> getPerfData(int id, List<Integer> idxs);
+
+  List<Film> findAllByKeyWordsPerf(List<String> keys);
 }

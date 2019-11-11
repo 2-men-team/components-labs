@@ -35,9 +35,9 @@ public class BookingRestController {
     return service.getFilmById(id);
   }
 
-  @GetMapping("/perf")
-  List<PerfData> getPerfData() {
-    return service.getPerfData();
+  @GetMapping("/film-list/{page}")
+  List<Film> getPerfData(@PathVariable int page) {
+    return service.getFilmsByPage(page);
   }
 
   /*

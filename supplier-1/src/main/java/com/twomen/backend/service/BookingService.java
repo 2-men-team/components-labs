@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface BookingService {
   List<Film> findAllFilmsByKeyWords(List<String> keyWords);
-  List<PerfData> getPerfData(List<Integer> ids);
   //List<Film> getAllRunningFilms();
   //List<MovieShow> getAllRunningMovieShows();
   //List<MovieShow> getMovieShowsByFilm(String film);

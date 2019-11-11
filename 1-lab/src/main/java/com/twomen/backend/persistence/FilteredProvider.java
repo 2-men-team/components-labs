@@ -1,9 +1,9 @@
 package com.twomen.backend.persistence;
 
 import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.PerfData;
 import com.twomen.backend.entity.SearchQuery;
-import org.springframework.http.HttpEntity;
+import com.twomen.backend.specification.MatchesKeyWords;
+import com.twomen.backend.specification.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
@@ -16,54 +16,68 @@ public class FilteredProvider {
   private static final String SUPPLIER_URL = "http://localhost:9090/api";
   private static final HttpHeaders headers = new HttpHeaders();
 
-  private final Map<Integer, CacheData> cache = new HashMap<>();
+  private final Map<String, CacheData> cache = new HashMap<>();
 
   private static final class CacheData {
-    PerfData data;
+    Set<Film> data;
     LocalDate date;
 
-    CacheData(PerfData data, LocalDate date) {
+    CacheData(Set<Film> data, LocalDate date) {
       this.data = data;
       this.date = date;
     }
   }
 
-  public FilteredProvider() {
-  }
-
   public List<Film> getFilmsByKeyWords(List<String> keyWords) {
-    RestTemplate template = new RestTemplate();
-    return template.postForObject(SUPPLIER_URL + "/search", new SearchQuery(keyWords), List.class);
+    return makeRequest("/search", keyWords);
   }
 
-  public List<PerfData> getPerfData(List<Integer> idxs) {
-    long time = System.currentTimeMillis();
-    List<PerfData> result = new ArrayList<>();
-    List<Integer> request = new ArrayList<>();
+  private List<Film> makeRequest(String path, List<String> keyWords) {
+    RestTemplate template = new RestTemplate();
+    return template.postForObject(SUPPLIER_URL + path, new SearchQuery(keyWords), List.class);
+  }
 
-    for (int id : idxs) {
-      if (!cache.containsKey(id) ||
-          cache.get(id).date.isBefore(LocalDate.now().minusDays(1))) {
-        request.add(id);
+  public List<Film> getFilmsByKeyWordsCached(List<String> keyWords) {
+    long time = System.currentTimeMillis();
+    Set<Film> result = new HashSet<>();
+    List<String> request = new ArrayList<>();
+
+    for (String key : keyWords) {
+      CacheData value = cache.get(key);
+
+      if (value == null || value.date.isBefore(LocalDate.now().minusDays(1))) {
+        request.add(key);
       } else {
-        result.add(cache.get(id).data);
+        result.addAll(value.data);
       }
     }
 
-    RestTemplate template = new RestTemplate();
-    List<PerfData> response = Collections.emptyList();
-
     if (!request.isEmpty()) {
-      response = template.postForObject(SUPPLIER_URL + "/perf", request, List.class);
+      List<Film> response = makeRequest("/search-perf", keyWords);
+      addToCache(request, response);
+      result.addAll(response);
     }
-
-    for (PerfData elem : response) {
-      cache.put(elem.getId(), new CacheData(elem, LocalDate.now()));
-    }
-
-    result.addAll(response);
 
     System.out.println("Response time (s): " + (System.currentTimeMillis() - time) * 1000);
-    return result;
+    return new ArrayList<>(result);
+  }
+
+  // not very efficient
+  private void addToCache(List<String> request, List<Film> response) {
+    for (Film film : response) {
+      for (String key : request) {
+        Specification<Film> spec = new MatchesKeyWords(Collections.singletonList(key));
+
+        if (spec.isSatisfiedBy(film)) {
+          CacheData value = cache.get(key);
+
+          if (value != null) value.data.add(film);
+          else {
+            CacheData data = new CacheData(new HashSet<>(Collections.singletonList(film)), LocalDate.now());
+            cache.put(key, data);
+          }
+        }
+      }
+    }
   }
 }

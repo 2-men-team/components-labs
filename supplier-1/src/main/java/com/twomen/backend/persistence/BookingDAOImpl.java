@@ -1,10 +1,6 @@
 package com.twomen.backend.persistence;
 
-import com.twomen.backend.entity.*;
-import com.twomen.backend.rest.NotFoundException;
 import com.twomen.backend.specification.Specification;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -13,8 +9,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class BookingDAOImpl implements BookingDAO {
@@ -35,14 +29,6 @@ public class BookingDAOImpl implements BookingDAO {
     Predicate predicate = specification.toPredicate(root, builder);
     query.where(predicate);
     return manager.createQuery(query).getResultList();
-  }
-
-  @Override
-  public List<PerfData> getPerfData(List<Integer> ids) {
-    Session session = manager.unwrap(Session.class);
-    Query<PerfData> query = session.createQuery("from PerfData where id in :ids", PerfData.class);
-    query.setParameter("ids", ids);
-    return query.getResultList();
   }
 
   /*

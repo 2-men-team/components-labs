@@ -25,11 +25,6 @@ public class BookingRestController {
     this.service = service;
   }
 
-  @PostMapping("/perf/{id}")
-  List<PerfData> getPerfData(@PathVariable int id, @RequestBody List<Integer> idxs) {
-    return service.getPerfData(id, idxs);
-  }
-
   @GetMapping("/films")
   List<Film> getAllRunningFilms() {
     return service.getAllRunningFilms();
@@ -38,6 +33,11 @@ public class BookingRestController {
   @PostMapping("/films")
   List<Film> findAllFilms(@RequestBody SearchQuery query) {
     return service.findAllByKeyWords(query.getKeys());
+  }
+
+  @PostMapping("/films-perf")
+  List<Film> findAllFilmsPerf(@RequestBody SearchQuery query) {
+    return service.findAllByKeyWordsPerf(query.getKeys());
   }
 
   @GetMapping("/films/{filmName}")

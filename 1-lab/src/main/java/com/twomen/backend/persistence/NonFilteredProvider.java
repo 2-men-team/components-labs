@@ -1,7 +1,6 @@
 package com.twomen.backend.persistence;
 
 import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.PerfData;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +29,5 @@ public class NonFilteredProvider {
     String url = SUPPLIER_URL + "/details/" + id;
     RestTemplate template = new RestTemplate();
     return template.getForObject(url, Film.class);
-  }
-
-  public List<PerfData> getPerfData() {
-    RestTemplate template = new RestTemplate();
-    return template.getForObject(SUPPLIER_URL + "/perf", List.class);
   }
 }

@@ -9,7 +9,8 @@ import java.util.List;
 public interface BookingService {
   List<Film> getAllRunningFilms();
   Film getFilmById(int id);
-  List<PerfData> getPerfData();
+
+  List<Film> getFilmsByPage(int page);
 
   /*
   List<MovieShow> getAllRunningMovieShows();

@@ -50,10 +50,11 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public List<PerfData> getPerfData(int id, List<Integer> idxs) {
-    if (id == FILTERED_ID) return filteredProvider.getPerfData(idxs);
-    else if (id == NONFILTERED_ID) return nonFilteredProvider.getPerfData();
-    throw new AssertionError("Provide better error handling");
+  public List<Film> findAllByKeyWordsPerf(List<String> keyWords) {
+    Specification<Film> specification = new MatchesKeyWords(keyWords);
+    List<Film> films = dao.findAllBySpecification(specification);
+    films.addAll(filteredProvider.getFilmsByKeyWordsCached(keyWords));
+    return films;
   }
 
   @Override

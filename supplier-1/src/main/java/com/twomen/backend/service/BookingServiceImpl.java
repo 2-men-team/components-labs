@@ -27,16 +27,4 @@ public class BookingServiceImpl implements BookingService {
     Specification<Film> specification = new MatchesKeyWords(keyWords);
     return dao.findAllBySpecification(specification);
   }
-
-  @Override
-  public List<PerfData> getPerfData(List<Integer> ids) {
-    try {
-      // emulate slow response time
-      Thread.sleep((long) (Math.random() * 20) * 1000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-
-    return dao.getPerfData(ids);
-  }
 }

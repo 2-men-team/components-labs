@@ -16,6 +16,8 @@ import java.util.List;
 
 @Service
 public class BookingServiceImpl implements BookingService {
+  private static final int FILMS_PER_PAGE = 5000;
+
   private final BookingDAO dao;
 
   @Autowired
@@ -36,15 +38,12 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public List<PerfData> getPerfData() {
-    int n = 5000;
-    List<Integer> idxs = new ArrayList<>(n);
-
-    for (int i = 0; i < n; ++i) {
-      idxs.add((int) (Math.random() * n));
+  public List<Film> getFilmsByPage(int page) {
+    if (page < 1) {
+      throw new IllegalArgumentException("Invalid page number");
     }
 
-    return dao.getPerfData(idxs);
+    return dao.getFilmsBetweenIds((page - 1) * FILMS_PER_PAGE + 1, page * FILMS_PER_PAGE);
   }
 
   /*
