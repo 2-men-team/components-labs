@@ -1,9 +1,6 @@
 package com.twomen.backend.service;
 
-import com.twomen.backend.entity.Booking;
-import com.twomen.backend.entity.BookingDTO;
-import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.MovieShow;
+import com.twomen.backend.entity.*;
 import com.twomen.backend.specification.Specification;
 
 import java.util.Date;
@@ -18,4 +15,8 @@ public interface BookingService {
   List<Booking> getBookingByPhone(String phone);
   void deleteBooking(int id);
   List<Film> findAllByKeyWords(List<String> keyWords);
+
+  List<Film> findAllByKeyWordsPerf(List<String> keys);
+
+  List<Film> getFilmsByPage(int page);
 }

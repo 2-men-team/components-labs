@@ -17,6 +17,9 @@ import java.util.List;
 
 @Service
 public class BookingServiceImpl implements BookingService {
+  private static final int FILTERED_ID = 1;
+  private static final int NONFILTERED_ID = 2;
+
   private final BookingDAO dao;
   private final FilteredProvider filteredProvider;
   private final NonFilteredProvider nonFilteredProvider;
@@ -44,6 +47,19 @@ public class BookingServiceImpl implements BookingService {
     List<Film> films = dao.findAllBySpecification(specification);
     films.addAll(filteredProvider.getFilmsByKeyWords(keyWords));
     return films;
+  }
+
+  @Override
+  public List<Film> findAllByKeyWordsPerf(List<String> keyWords) {
+    Specification<Film> specification = new MatchesKeyWords(keyWords);
+    List<Film> films = dao.findAllBySpecification(specification);
+    films.addAll(filteredProvider.getFilmsByKeyWordsCached(keyWords));
+    return films;
+  }
+
+  @Override
+  public List<Film> getFilmsByPage(int page) {
+    return nonFilteredProvider.getFilmsForPage(page);
   }
 
   @Override

@@ -1,9 +1,6 @@
 package com.twomen.backend.service;
 
-import com.twomen.backend.entity.Booking;
-import com.twomen.backend.entity.BookingDTO;
-import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.MovieShow;
+import com.twomen.backend.entity.*;
 import com.twomen.backend.specification.Specification;
 
 import java.util.Date;

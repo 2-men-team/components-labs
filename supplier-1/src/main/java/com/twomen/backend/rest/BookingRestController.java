@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/api")
@@ -27,6 +28,17 @@ public class BookingRestController {
 
   @PostMapping("/search")
   List<Film> getFilmsByKeyWords(@RequestBody SearchQuery query) {
+    return service.findAllFilmsByKeyWords(query.getKeys());
+  }
+
+  @PostMapping("/search-perf")
+  List<Film> getFilmsByKeyWordsPerf(@RequestBody SearchQuery query) {
+    Random random = new Random();
+    try {
+      Thread.sleep(random.nextInt(21) * 1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     return service.findAllFilmsByKeyWords(query.getKeys());
   }
 

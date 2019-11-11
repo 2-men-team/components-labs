@@ -10,11 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class BookingServiceImpl implements BookingService {
+  private static final int FILMS_PER_PAGE = 5000;
+
   private final BookingDAO dao;
 
   @Autowired
@@ -32,6 +35,15 @@ public class BookingServiceImpl implements BookingService {
   @Transactional
   public Film getFilmById(int id) {
     return dao.getFilmById(id);
+  }
+
+  @Override
+  public List<Film> getFilmsByPage(int page) {
+    if (page < 1) {
+      throw new IllegalArgumentException("Invalid page number");
+    }
+
+    return dao.getFilmsBetweenIds((page - 1) * FILMS_PER_PAGE + 1, page * FILMS_PER_PAGE);
   }
 
   /*

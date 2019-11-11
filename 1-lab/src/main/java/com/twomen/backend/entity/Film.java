@@ -50,4 +50,19 @@ public class Film {
   public void setId(int id) {
     this.id = id;
   }
+
+  @Override
+  public int hashCode() {
+    // films are uniquely identified by their ids
+    return Integer.hashCode(id);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null) return false;
+    if (o == this) return true;
+    if (o.getClass() != this.getClass()) return false;
+    Film that = (Film) o;
+    return this.id == that.id;
+  }
 }

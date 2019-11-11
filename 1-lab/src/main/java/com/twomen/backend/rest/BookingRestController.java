@@ -35,6 +35,16 @@ public class BookingRestController {
     return service.findAllByKeyWords(query.getKeys());
   }
 
+  @PostMapping("/films-perf")
+  List<Film> findAllFilmsPerf(@RequestBody SearchQuery query) {
+    return service.findAllByKeyWordsPerf(query.getKeys());
+  }
+
+  @GetMapping("/films-perf/{page}")
+  List<Film> getFilmsByPage(@PathVariable int page) {
+    return service.getFilmsByPage(page);
+  }
+
   @GetMapping("/films/{filmName}")
   List<MovieShow> getMovieShowsByFilm(@PathVariable String filmName) {
     return service.getMovieShowsByFilm(filmName);
