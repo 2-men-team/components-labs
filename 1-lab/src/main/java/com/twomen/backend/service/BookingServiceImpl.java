@@ -58,6 +58,11 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
+  public List<Film> getFilmsByPage(int page) {
+    return nonFilteredProvider.getFilmsForPage(page);
+  }
+
+  @Override
   @Transactional
   public List<MovieShow> getAllRunningMovieShows() {
     return dao.getAllRunningMovieShows();
