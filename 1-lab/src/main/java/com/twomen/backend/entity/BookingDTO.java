@@ -1,13 +1,29 @@
 package com.twomen.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class BookingDTO {
+  @JsonProperty("api_key")
+  private String apiKey;
+
+  @JsonProperty("film")
   private String film;
+
+  @JsonProperty("first_name")
   private String firstName;
+
+  @JsonProperty("last_name")
   private String lastName;
+
+  @JsonProperty("email")
   private String email;
+
+  @JsonProperty("phone_number")
   private String phoneNumber;
+
+  @JsonProperty("places")
   private List<Integer> places;
 
   public List<Integer> getPlaces() {

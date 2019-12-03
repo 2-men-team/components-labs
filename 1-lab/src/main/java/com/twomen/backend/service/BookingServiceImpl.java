@@ -1,14 +1,13 @@
 package com.twomen.backend.service;
 
 import com.twomen.backend.entity.*;
-import com.twomen.backend.persistence.BookingDAO;
-import com.twomen.backend.persistence.DAOFactory;
-import com.twomen.backend.persistence.FilteredProvider;
-import com.twomen.backend.persistence.NonFilteredProvider;
+import com.twomen.backend.persistence.*;
+import com.twomen.backend.rest.BookingAuthenticationException;
 import com.twomen.backend.rest.NotFoundException;
 import com.twomen.backend.specification.MatchesKeyWords;
 import com.twomen.backend.specification.Specification;
 import com.twomen.backend.util.TimedCache;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +24,8 @@ public class BookingServiceImpl implements BookingService {
   private final BookingDAO dao;
   private final FilteredProvider filteredProvider;
   private final NonFilteredProvider nonFilteredProvider;
+  private final AuthProvider authProvider;
+  private final BookingProvider bookingProvider;
 
   private final TimedCache<String, Set<Film>> filteredCache = new TimedCache<>(Period.ofDays(1));
   private final TimedCache<String, Set<Film>> nonFilteredCache = new TimedCache<>(Period.ofDays(1));
@@ -32,10 +33,20 @@ public class BookingServiceImpl implements BookingService {
   @Autowired
   public BookingServiceImpl(DAOFactory factory,
                             FilteredProvider filteredProvider,
-                            NonFilteredProvider nonFilteredProvider) {
+                            NonFilteredProvider nonFilteredProvider,
+                            AuthProvider authProvider,
+                            BookingProvider bookingProvider) {
     this.dao = factory.create();
     this.filteredProvider = filteredProvider;
     this.nonFilteredProvider = nonFilteredProvider;
+    this.authProvider = authProvider;
+    this.bookingProvider = bookingProvider;
+  }
+
+  public void validate(String apiKey) {
+    if (!authProvider.isValid(apiKey)) {
+      throw new BookingAuthenticationException();
+    }
   }
 
   @PostConstruct
@@ -136,25 +147,23 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  @Transactional
   public List<MovieShow> getAllRunningMovieShows() {
-    return dao.getAllRunningMovieShows();
+    List<MovieShow> shows = bookingProvider.getAllRunningMovieShows();
+    for (MovieShow show : shows) {
+      System.out.println(show.getFilmId());
+      show.setFilm(dao.getFilmById(show.getFilmId()));
+    }
+    return shows;
   }
 
   @Override
-  @Transactional
-  public List<MovieShow> getMovieShowsByFilm(String film) {
-    return dao.getMovieShowsByFilm(film);
-  }
-
-  @Override
-  @Transactional
   public MovieShow getMovieShow(String name, Date date) {
-    return dao.getMovieShow(name, date);
+    MovieShow show = bookingProvider.getMovieShow(dao.getFilmByName(name).getId(), date);
+    show.setFilm(dao.getFilmById(show.getFilmId()));
+    return show;
   }
 
   @Override
-  @Transactional
   public Booking makeBooking(BookingDTO info, Date date) {
     List<Place> placeList = Place.convert(info.getPlaces());
     Booking.Builder builder = new Booking.Builder();
@@ -171,12 +180,9 @@ public class BookingServiceImpl implements BookingService {
       throw new NotFoundException("No places passed.");
     }
 
-    MovieShow show = getMovieShow(info.getFilm(), date);
+    MovieShow show = bookingProvider.getMovieShow(dao.getFilmByName(info.getFilm()).getId(), date);
 
-    if (!show.isActive()) {
-      throw new NotFoundException("Show is no longer active.");
-    }
-
+    System.out.println("RECEIVED show:" + show.getFilmId());
     for (Place place : placeList) {
       if (place.getPlaceNumber() < 0 || place.getPlaceNumber() > 90) {
         if (!show.getPlaces().contains(place)) {
@@ -185,24 +191,17 @@ public class BookingServiceImpl implements BookingService {
       }
     }
 
+    System.out.println(show.getId());
     Booking booking = builder
       .setShowId(show.getId())
       .build();
 
-    booking.setId(0);
-    dao.makeBooking(booking);
+    bookingProvider.makeBooking(booking);
     return booking;
   }
 
   @Override
-  @Transactional
-  public List<Booking> getBookingByPhone(String phone) {
-    return dao.getBookingByPhone(phone);
-  }
-
-  @Override
-  @Transactional
   public void deleteBooking(int id) {
-    dao.deleteBooking(id);
+    bookingProvider.deleteBooking(id);
   }
 }

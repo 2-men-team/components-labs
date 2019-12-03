@@ -1,9 +1,6 @@
 package com.twomen.backend.persistence;
 
-import com.twomen.backend.entity.Booking;
 import com.twomen.backend.entity.Film;
-import com.twomen.backend.entity.MovieShow;
-import com.twomen.backend.entity.Place;
 import com.twomen.backend.rest.NotFoundException;
 import com.twomen.backend.specification.Specification;
 import org.hibernate.Session;
@@ -18,10 +15,8 @@ import org.hibernate.query.Query;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-// CREATIONAL PATTERN
+
 public class BookingDAOImpl implements BookingDAO {
   private static final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -38,98 +33,6 @@ public class BookingDAOImpl implements BookingDAO {
     return query.getResultList();
   }
 
-  @Override
-  public List<MovieShow> getAllRunningMovieShows() {
-    Session session = manager.unwrap(Session.class);
-    Query<MovieShow> query = session.createQuery("from MovieShow where is_active is true", MovieShow.class);
-    return query.getResultList();
-  }
-
-  @Override
-  public List<MovieShow> getMovieShowsByFilm(String filmName) {
-    Session session = manager.unwrap(Session.class);
-    int id = getFilmById(filmName);
-    Query<MovieShow> movieQuery = session.createQuery("from MovieShow where film_id=:filmId", MovieShow.class);
-    movieQuery.setParameter("filmId", id);
-    return movieQuery.getResultList();
-  }
-
-  @Override
-  public MovieShow getMovieShow(String filmName, Date date) {
-    Session session = manager.unwrap(Session.class);
-    int id = getFilmById(filmName);
-
-    Query<MovieShow> movieQuery = session.createQuery(
-      "from MovieShow where film_id=:filmId and start_time=:date", MovieShow.class);
-
-    movieQuery.setParameter("filmId", id);
-    movieQuery.setParameter("date", formatter.format(date));
-    return getSingleResult(movieQuery, "Movie show for '" + filmName + "' at '" + date + "' was not found.");
-  }
-
-  @Override
-  public MovieShow getMovieShowById(int id) {
-    Session session = manager.unwrap(Session.class);
-    Query<MovieShow> query = session.createQuery("from MovieShow where show_id=:id", MovieShow.class);
-    query.setParameter("id", id);
-    return query.getSingleResult();
-  }
-
-  @Override
-  public void makeBooking(Booking info) {
-    Session session = manager.unwrap(Session.class);
-
-    List<Place> bookedPlaces = getBookedPlaces(info.getShowId());
-
-    for (Place place : bookedPlaces) {
-      if (info.getPlaces().contains(place)) {
-        throw new NotFoundException("Place '" + place.getPlaceNumber() + "' for show id '" +
-          + info.getShowId() + "' has already been booked.");
-      }
-    }
-
-    session.save(info);
-    for (Place place : info.getPlaces()) {
-      place.setId(info.getId());
-      session.save(place);
-    }
-  }
-
-  @Override
-  public List<Place> getBookedPlaces(int showId) {
-    Session session = manager.unwrap(Session.class);
-    Query<Booking> query = session.createQuery("from Booking where show_id=:showId", Booking.class);
-    query.setParameter("showId", showId);
-    List<Booking> bookings = query.getResultList();
-
-    List<Integer> ids = new ArrayList<>();
-    bookings.forEach((i) -> ids.add(i.getId()));
-
-    if (ids.isEmpty())
-      return new ArrayList<>();
-
-    return session
-      .createQuery("from Place where booking_id in (:ids)", Place.class)
-      .setParameterList("ids", ids)
-      .getResultList();
-  }
-
-  @Override
-  public void deleteBooking(int id) {
-    Session session = manager.unwrap(Session.class);
-    Query query = session.createQuery("delete from Booking where booking_id=:bookingId");
-    query.setParameter("bookingId", id);
-    query.executeUpdate();
-  }
-
-  @Override
-  public List<Booking> getBookingByPhone(String phone) {
-    Session session = manager.unwrap(Session.class);
-    Query<Booking> query = session.createQuery("from Booking where phone_number=:phone", Booking.class);
-    query.setParameter("phone", phone);
-    return query.getResultList();
-  }
-
   public <T> List<T> findAllBySpecification(Specification<T> specification) {
     CriteriaBuilder builder = manager.getCriteriaBuilder();
     CriteriaQuery<T> query = builder.createQuery(specification.getType());
@@ -140,15 +43,25 @@ public class BookingDAOImpl implements BookingDAO {
     return manager.createQuery(query).getResultList();
   }
 
-  private int getFilmById(String filmName) {
+  @Override
+  public Film getFilmById(int id) {
     Session session = manager.unwrap(Session.class);
-    Query<Film> query = session.createQuery("from Film where film_name=:film", Film.class);
-    query.setParameter("film", filmName);
-    return getSingleResult(query,"No movie shows for " + filmName + "' found.").getId();
+    Query<Film> query = session.createQuery("from Film where film_id=:id", Film.class);
+    query.setParameter("id", id);
+    return getSingleResult(query,"No movie shows for " + id + "' found.");
+  }
+
+  @Override
+  public Film getFilmByName(String name) {
+    Session session = manager.unwrap(Session.class);
+    Query<Film> query = session.createQuery("from Film where film_name=:name", Film.class);
+    query.setParameter("name", name);
+    return getSingleResult(query,"No movie shows for " + name + "' found.");
   }
 
   private static <T> T getSingleResult(Query<T> query, String message) {
     List<T> result = query.getResultList();
+    System.err.println(result);
     if (result.isEmpty()) {
       throw new NotFoundException(message);
     } else {

@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+option java_package = "com.twomen.backend.booking";
+option java_multiple_files = true;
+option java_outer_classname = "BookingProto";
+option objc_class_prefix = "B";
+
+package booking;
+
+service BookingService {
+  // returns all running shows
+  rpc GetAllShows(Filter) returns (stream ShowResponse) {}
+
+  // returns specific show by film_name and start_time
+  rpc GetShow(ShowRequest) returns (ShowResponse) {}
+
+  // delete certain booking
+  rpc DeleteBooking(DeleteRequest) returns (DeleteResponse) {}
+
+  // try to make booking for film
+  rpc MakeBooking(BookingRequest) returns (BookingResponse) {}
+}
+
+message DeleteResponse {
+    string mes = 1;
+}
+
+message Filter {
+    repeated string keys = 1;
+}
+
+message ShowRequest {
+    int32 id = 1;
+    int64 start_time = 2;
+}
+
+message DeleteRequest {
+    int32 id = 1;
+}
+
+message ShowResponse {
+    int32 show_id = 1;
+    int32 film_id = 2;
+    string film_name = 3;
+    int64 start_time = 4;
+    int64 end_time = 5;
+    int32 price = 6;
+    repeated int32 places = 7;
+}
+
+message BookingResponse {
+    string mes = 1;
+    string film_name = 2;
+    int64 start_time = 3;
+    string first_name = 4;
+    string last_name = 5;
+    string email = 6;
+    string phone_number = 7;
+    repeated int32 places = 8;
+    int32 price = 9;
+}
+
+message BookingRequest {
+    int32 id = 1;
+    int64 start_time = 2;
+    string first_name = 3;
+    string last_name = 4;
+    string email = 5;
+    string phone_number = 6;
+    repeated int32 places = 7;
+}

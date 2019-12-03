@@ -9,7 +9,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class NonFilteredProvider {
@@ -24,8 +27,9 @@ public class NonFilteredProvider {
       url,
       HttpMethod.GET,
       null,
-      new ParameterizedTypeReference<List<Film>>(){}
+      new ParameterizedTypeReference<List<Film>>() {}
     );
+
     return response.getBody();
   }
 

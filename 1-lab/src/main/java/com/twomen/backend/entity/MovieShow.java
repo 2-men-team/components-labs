@@ -1,10 +1,13 @@
 package com.twomen.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.twomen.backend.booking.ShowResponse;
+import com.twomen.backend.persistence.BookingProvider;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "movie_shows")
@@ -115,5 +118,16 @@ public class MovieShow {
 
   public void setFilm(Film film) {
     this.film = film;
+  }
+
+  public static MovieShow of(ShowResponse response) {
+    MovieShow show = new MovieShow();
+    show.setFilmId(response.getFilmId());
+    show.setStartTime(new Date(response.getStartTime()));
+    show.setEndTime(new Date(response.getEndTime()));
+    show.setPrice(response.getPrice());
+    show.setPlaces(BookingProvider.toPlaces(response.getPlacesList()));
+    show.setId(response.getShowId());
+    return show;
   }
 }

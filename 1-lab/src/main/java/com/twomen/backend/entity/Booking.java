@@ -1,6 +1,8 @@
 package com.twomen.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.twomen.backend.booking.BookingResponse;
+import com.twomen.backend.persistence.BookingProvider;
 
 import javax.persistence.*;
 import java.util.List;
@@ -162,6 +164,17 @@ public class Booking {
 
   public void setPlaces(List<Place> places) {
     this.places = places;
+  }
+
+  public static Booking of(BookingResponse response) {
+    return new Booking.Builder()
+      .setFilmName(response.getFilmName())
+      .setPhoneNumber(response.getPhoneNumber())
+      .setEmail(response.getEmail())
+      .setLastName(response.getLastName())
+      .setFirstName(response.getFirstName())
+      .setPlaces(BookingProvider.toPlaces(response.getPlacesList()))
+      .build();
   }
 }
 
