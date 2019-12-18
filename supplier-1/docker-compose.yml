@@ -1,0 +1,24 @@
+version: '2'
+services:
+  supplier1:
+    image: supplier1:latest
+    container_name: supplier1
+    depends_on:
+      - supplier1db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://supplier1db:3306/supplier1?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&useSSL=false
+    ports:
+      - 9090:9090
+
+  supplier1db:
+    image: mysql:latest
+    container_name: supplier1db
+    volumes:
+      - ~/docker/supplier1/mysql/:/var/lib/mysql/
+      - ./sql/:/docker-entrypoint-initdb.d/
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=supplier1
+      - MYSQL_USER=vasniktel
+      - MYSQL_PASSWORD=vasniktel
+    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8

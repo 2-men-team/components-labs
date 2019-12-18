@@ -1,0 +1,22 @@
+version: '2'
+services:
+  booking:
+    image: booking:latest
+    container_name: booking
+    depends_on:
+      - bookingdb
+    ports:
+      - 9093:9093
+
+  bookingdb:
+    image: mysql:latest
+    container_name: bookingdb
+    volumes:
+      - ~/docker/booking/mysql/:/var/lib/mysql/
+      - ./sql/:/docker-entrypoint-initdb.d/
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=booking_service
+      - MYSQL_USER=vasniktel
+      - MYSQL_PASSWORD=vasniktel
+    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8
