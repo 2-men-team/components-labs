@@ -40,4 +40,15 @@ public class RestExceptionHandler {
 
     return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler
+  public ResponseEntity<BookingErrorResponse> handleException(ServiceUnavailableException e) {
+    BookingErrorResponse error = new BookingErrorResponse(
+        HttpStatus.SERVICE_UNAVAILABLE.value(),
+        e.getMessage(),
+        System.currentTimeMillis()
+    );
+
+    return new ResponseEntity<>(error, HttpStatus.SERVICE_UNAVAILABLE);
+  }
 }

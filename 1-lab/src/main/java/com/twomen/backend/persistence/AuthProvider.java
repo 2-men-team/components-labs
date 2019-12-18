@@ -3,7 +3,10 @@ package com.twomen.backend.persistence;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.twomen.backend.rest.ServiceUnavailableException;
 import org.springframework.http.HttpEntity;
+import org.springframework.retry.policy.TimeoutRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,7 +24,17 @@ public class AuthProvider {
   }
 
   public boolean isValid(String apiKey) {
-    String answer = TEMPLATE.getForObject(AUTH_URL + "/valid?api_key=" + apiKey, String.class);
+    RetryTemplate retry = new RetryTemplate();
+    TimeoutRetryPolicy policy = new TimeoutRetryPolicy();
+    policy.setTimeout(3000);
+    retry.setRetryPolicy(policy);
+
+    String answer = retry.execute(
+        context -> TEMPLATE.getForObject(AUTH_URL + "/valid?api_key=" + apiKey, String.class),
+        context -> {
+          throw new ServiceUnavailableException("Auth service is not available");
+        });
+
     return getField(answer, "is_valid").getAsBoolean(); // check if passed api key is valid
   }
 
