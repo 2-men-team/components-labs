@@ -6,9 +6,10 @@ import com.twomen.backend.rest.BookingAuthenticationException;
 import com.twomen.backend.rest.NotFoundException;
 import com.twomen.backend.specification.MatchesKeyWords;
 import com.twomen.backend.specification.Specification;
-import com.twomen.backend.util.TimedCache;
-import org.hibernate.Session;
+import com.twomen.backend.util.Cache;
+import com.twomen.backend.util.TimedHashCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -27,8 +28,8 @@ public class BookingServiceImpl implements BookingService {
   private final AuthProvider authProvider;
   private final BookingProvider bookingProvider;
 
-  private final TimedCache<String, Set<Film>> filteredCache = new TimedCache<>(Period.ofDays(1));
-  private final TimedCache<String, Set<Film>> nonFilteredCache = new TimedCache<>(Period.ofDays(1));
+  //private final Cache<String, Set<Film>> filteredCache = new TimedHashCache<>(Period.ofDays(1));
+  //private final Cache<String, Set<Film>> nonFilteredCache = new TimedHashCache<>(Period.ofDays(1));
 
   @Autowired
   public BookingServiceImpl(DAOFactory factory,
@@ -49,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
     }
   }
 
-  @PostConstruct
+  /*@PostConstruct
   private void initializeCaches() {
     List<Film> nonFilteredData = nonFilteredProvider.getAllFilms();
     List<String> keys = new ArrayList<>();
@@ -61,7 +62,7 @@ public class BookingServiceImpl implements BookingService {
     List<Film> filteredData = findAllByKeyWords(keys);
     addToCache(keys, filteredData, filteredCache);
     addToCache(keys, nonFilteredData, nonFilteredCache);
-  }
+  }*/
 
   @Override
   @Transactional
@@ -71,6 +72,7 @@ public class BookingServiceImpl implements BookingService {
     return films;
   }
 
+  @Cacheable(value = "findAllByKeyWords", key = "keyWords.toString()")
   @Override
   public List<Film> findAllByKeyWords(List<String> keyWords) {
     Specification<Film> specification = new MatchesKeyWords(keyWords);
@@ -79,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
     return films;
   }
 
-  @Override
+  /*@Override
   public List<Film> findAllByKeyWordsPerf(List<String> keyWords) {
     long time = System.currentTimeMillis();
     Set<Film> result = new HashSet<>();
@@ -117,7 +119,7 @@ public class BookingServiceImpl implements BookingService {
     return new ArrayList<>(result);
   }
 
-  private Set<Film> addToCache(List<String> request, List<Film> response, TimedCache<String, Set<Film>> cache) {
+  private Set<Film> addToCache(List<String> request, List<Film> response, Cache<String, Set<Film>> cache) {
     Set<Film> result = new HashSet<>();
 
     for (String key : request) {
@@ -139,7 +141,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     return result;
-  }
+  }*/
 
   @Override
   public List<Film> getFilmsByPage(int page) {

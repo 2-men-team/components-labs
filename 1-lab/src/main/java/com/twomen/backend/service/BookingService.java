@@ -19,7 +19,7 @@ public interface BookingService {
 
   List<Film> findAllByKeyWords(List<String> keyWords);
 
-  List<Film> findAllByKeyWordsPerf(List<String> keys);
+  //List<Film> findAllByKeyWordsPerf(List<String> keys);
 
   List<Film> getFilmsByPage(int page);
 

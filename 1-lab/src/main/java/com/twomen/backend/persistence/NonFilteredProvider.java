@@ -1,8 +1,11 @@
 package com.twomen.backend.persistence;
 
+import com.twomen.backend.Config;
 import com.twomen.backend.entity.Film;
 import com.twomen.backend.rest.ServiceUnavailableException;
-import com.twomen.backend.util.TimedCache;
+import com.twomen.backend.util.Cache;
+import com.twomen.backend.util.TimedHashCache;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -12,16 +15,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class NonFilteredProvider {
-  private static final String SUPPLIER_URL = "http://localhost:9091/api";
+  private static final String SUPPLIER_URL = Config.NON_FILTERED_API;
 
-  private final TimedCache<Integer, List<Film>> cache = new TimedCache<>(Period.ofDays(1));
+  //private final Cache<Integer, List<Film>> cache = new TimedHashCache<>(Period.ofDays(1));
 
   public List<Film> getAllFilms() {
     String url = SUPPLIER_URL + "/film-list";
@@ -63,10 +63,11 @@ public class NonFilteredProvider {
     return makeRequest(SUPPLIER_URL + "/details/" + id, Film.class);
   }
 
+  @Cacheable(value = "non-filtered-cache", key = "#page")
   public List<Film> getFilmsForPage(int page) {
-    if (cache.containsKey(page)) return cache.get(page);
+    //if (cache.containsKey(page)) return cache.get(page);
     List<Film> result = makeRequest(SUPPLIER_URL + "/film-list/" + page, List.class);
-    cache.put(page, result);
+    //cache.put(page, result);
     return result;
   }
 }

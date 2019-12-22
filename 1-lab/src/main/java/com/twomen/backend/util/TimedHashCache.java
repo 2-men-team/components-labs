@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class TimedCache<K, V> {
+public class TimedHashCache<K, V> implements Cache<K, V> {
   private final Map<K, Data<V>> map = new HashMap<>();
   private final Period interval;
 
@@ -24,10 +24,11 @@ public class TimedCache<K, V> {
     }
   }
 
-  public TimedCache(Period interval) {
+  public TimedHashCache(Period interval) {
     this.interval = Objects.requireNonNull(interval);
   }
 
+  @Override
   public V get(K key) {
     Data<V> data = map.get(key);
     if (data == null) return null;
@@ -40,11 +41,13 @@ public class TimedCache<K, V> {
     return data.value;
   }
 
+  @Override
   public V put(K key, V value) {
     Data<V> data = map.put(key, new Data<>(value));
     return data == null ? null : data.value;
   }
 
+  @Override
   public boolean containsKey(K key) {
     return get(key) != null;
   }

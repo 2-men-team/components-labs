@@ -35,13 +35,13 @@ public class BookingRestController {
     return service.findAllByKeyWords(query.getKeys());
   }
 
-  @PostMapping("/films-perf")
+  /*@PostMapping("/films-perf")
   List<Film> findAllFilmsPerf(@RequestBody SearchQuery query) {
     service.validate(query.getApiKey());
     return service.findAllByKeyWordsPerf(query.getKeys());
-  }
+  }*/
 
-  @GetMapping("/films-perf/{page}")
+  @GetMapping("/films/{page}")
   List<Film> getFilmsByPage(@PathVariable int page, @RequestParam("api_key") String apiKey) {
     service.validate(apiKey);
     return service.getFilmsByPage(page);

@@ -3,6 +3,7 @@ package com.twomen.backend.persistence;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.twomen.backend.Config;
 import com.twomen.backend.rest.ServiceUnavailableException;
 import org.springframework.http.HttpEntity;
 import org.springframework.retry.policy.TimeoutRetryPolicy;
@@ -12,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Repository
 public class AuthProvider {
-  private static final String AUTH_URL = "http://localhost:9092/api";
+  private static final String AUTH_URL = Config.AUTH_API;
   private static final RestTemplate TEMPLATE = new RestTemplate();
 
   public String registerUser(String name, String email) {

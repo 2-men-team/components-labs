@@ -1,14 +1,11 @@
 package com.twomen.backend.persistence;
 
+import com.twomen.backend.Config;
 import com.twomen.backend.entity.Film;
 import com.twomen.backend.entity.SearchQuery;
 import com.twomen.backend.rest.ServiceUnavailableException;
-import com.twomen.backend.specification.MatchesKeyWords;
-import com.twomen.backend.specification.Specification;
-import com.twomen.backend.util.TimedCache;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.policy.TimeoutRetryPolicy;
@@ -16,14 +13,11 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.ParameterizedType;
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.*;
+import java.util.List;
 
 @Repository
 public class FilteredProvider {
-  private static final String SUPPLIER_URL = "http://localhost:9090/api";
+  private static final String SUPPLIER_URL = Config.FILTERED_API;
 
   public List<Film> getFilmsByKeyWords(List<String> keyWords) {
     return makeRequest("/search", keyWords);

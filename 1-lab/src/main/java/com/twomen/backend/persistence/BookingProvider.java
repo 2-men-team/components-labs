@@ -1,5 +1,6 @@
 package com.twomen.backend.persistence;
 
+import com.twomen.backend.Config;
 import com.twomen.backend.booking.*;
 import com.twomen.backend.entity.Booking;
 import com.twomen.backend.entity.BookingDTO;
@@ -18,7 +19,7 @@ import static com.twomen.backend.booking.BookingServiceGrpc.*;
 
 @Repository
 public class BookingProvider {
-  private static final String HOST = "localhost";
+  private static final String HOST = Config.HOST_IP;
   private static final int PORT = 9093;
 
   private final ManagedChannel channel;
