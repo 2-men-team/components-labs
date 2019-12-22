@@ -1,6 +1,5 @@
 package com.twomen.backend.rest;
 
-import com.twomen.backend.entity.Booking;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
