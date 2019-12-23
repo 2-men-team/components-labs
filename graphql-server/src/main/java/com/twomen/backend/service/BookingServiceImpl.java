@@ -2,19 +2,15 @@ package com.twomen.backend.service;
 
 import com.twomen.backend.entity.*;
 import com.twomen.backend.persistence.*;
-import com.twomen.backend.rest.BookingAuthenticationException;
-import com.twomen.backend.rest.NotFoundException;
+import com.twomen.backend.exceptions.BookingAuthenticationException;
+import com.twomen.backend.exceptions.NotFoundException;
 import com.twomen.backend.specification.MatchesKeyWords;
 import com.twomen.backend.specification.Specification;
-import com.twomen.backend.util.Cache;
-import com.twomen.backend.util.TimedHashCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import java.time.Period;
 import java.util.*;
 
 @Service
@@ -168,6 +164,7 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
+  @Transactional
   public Booking makeBooking(BookingDTO info, Date date) {
     List<Place> placeList = Place.convert(info.getPlaces());
     Booking.Builder builder = new Booking.Builder();

@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.twomen.backend.Config;
-import com.twomen.backend.rest.ServiceUnavailableException;
+import com.twomen.backend.exceptions.ServiceUnavailableException;
 import org.springframework.http.HttpEntity;
 import org.springframework.retry.policy.TimeoutRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;

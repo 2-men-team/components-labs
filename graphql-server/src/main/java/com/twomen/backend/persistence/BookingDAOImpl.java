@@ -1,7 +1,7 @@
 package com.twomen.backend.persistence;
 
 import com.twomen.backend.entity.Film;
-import com.twomen.backend.rest.NotFoundException;
+import com.twomen.backend.exceptions.NotFoundException;
 import com.twomen.backend.specification.Specification;
 import org.hibernate.Session;
 

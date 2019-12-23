@@ -3,7 +3,7 @@ package com.twomen.backend.persistence;
 import com.twomen.backend.Config;
 import com.twomen.backend.entity.Film;
 import com.twomen.backend.entity.SearchQuery;
-import com.twomen.backend.rest.ServiceUnavailableException;
+import com.twomen.backend.exceptions.ServiceUnavailableException;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;

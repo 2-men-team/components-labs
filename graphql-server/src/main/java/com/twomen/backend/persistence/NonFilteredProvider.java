@@ -2,9 +2,7 @@ package com.twomen.backend.persistence;
 
 import com.twomen.backend.Config;
 import com.twomen.backend.entity.Film;
-import com.twomen.backend.rest.ServiceUnavailableException;
-import com.twomen.backend.util.Cache;
-import com.twomen.backend.util.TimedHashCache;
+import com.twomen.backend.exceptions.ServiceUnavailableException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -14,7 +12,6 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Period;
 import java.util.List;
 
 @Repository

@@ -3,6 +3,7 @@ package com.twomen.backend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -11,7 +12,7 @@ public class Booking {
   @Id
   @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "booking_id")
+  @Column(name = "booking_id", nullable = false)
   private int id;
 
   @JsonIgnore
@@ -34,7 +35,7 @@ public class Booking {
   private String phoneNumber;
 
   @OneToMany(fetch = FetchType.EAGER)
-  @JoinColumn(name = "booking_id")
+  @JoinColumn(name = "booking_id", updatable = false)
   private List<Place> places;
 
   public Booking() {
@@ -50,8 +51,12 @@ public class Booking {
     this.places = places;
   }
 
+  @Override
+  public String toString() {
+    return "Booking ID { " + id + " }";
+  }
+
   public static class Builder {
-    private int id;
     private int showId;
     private String filmName;
     private String firstName;

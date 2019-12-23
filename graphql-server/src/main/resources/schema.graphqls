@@ -31,3 +31,7 @@ type Query {
     findAllByKeyWords(keys: [String]): [Film]!
 }
 
+type Mutation {
+    makeBooking(film: String, firstName: String, lastName: String, email: String, phoneNumber: String, places: [Int], date: String): Booking
+    deleteBooking(id: Int): Boolean
+}

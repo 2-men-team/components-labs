@@ -1,5 +1,8 @@
 package com.twomen.backend.rest;
 
+import com.twomen.backend.exceptions.BookingAuthenticationException;
+import com.twomen.backend.exceptions.NotFoundException;
+import com.twomen.backend.exceptions.ServiceUnavailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

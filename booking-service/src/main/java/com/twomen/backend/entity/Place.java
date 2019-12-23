@@ -3,6 +3,7 @@ package com.twomen.backend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class Place implements Serializable {
 
   @Id
   @JsonIgnore
-  @Column(name = "booking_id")
+  @Column(name = "booking_id", nullable = false)
   private int id;
 
   @Id
