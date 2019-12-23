@@ -107,7 +107,6 @@ public class BookingDAOImpl implements BookingDAO {
     System.err.println("BOOKING OBJECT: " + booking);
     System.err.println("BOOKING ID: " + booking.getId());
     session.delete(booking);
-    System.out.println(booking);
     session.getTransaction().commit();
   }
 

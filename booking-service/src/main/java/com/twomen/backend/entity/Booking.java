@@ -3,7 +3,6 @@ package com.twomen.backend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -12,7 +11,7 @@ public class Booking {
   @Id
   @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "booking_id", nullable = false)
+  @Column(name = "booking_id")
   private int id;
 
   @JsonIgnore
