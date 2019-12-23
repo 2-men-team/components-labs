@@ -17,4 +17,6 @@ public interface BookingDAO {
   Booking makeBooking(Booking booking);
 
   void deleteBooking(int id);
+
+  Booking getBooking(int id);
 }

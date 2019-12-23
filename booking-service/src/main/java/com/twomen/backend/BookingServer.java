@@ -101,6 +101,13 @@ public class BookingServer {
     }
 
     @Override
+    public void getBooking(BookingRequest request, StreamObserver<BookingResponse> responseObserver) {
+      Booking booking = dao.getBooking(request.getId());
+      responseObserver.onNext(fromBooking(booking));
+      responseObserver.onCompleted();
+    }
+
+    @Override
     public void getAllShows(Filter request, StreamObserver<ShowResponse> responseObserver) {
       List<ShowResponse> shows = toShowMessage(dao.getAllRunningMovieShows());
       System.err.println("SHOWS SIZE: " + shows.size());
@@ -148,7 +155,7 @@ public class BookingServer {
         .setLastName(booking.getLastName())
         .setPhoneNumber(booking.getPhoneNumber())
         .addAllPlaces(toPlaceNums(booking.getPlaces()))
-        .setMes("Booking executed")
+        .setMes("Booking")
         .build();
     }
 

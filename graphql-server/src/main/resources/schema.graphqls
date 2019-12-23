@@ -1,0 +1,33 @@
+type Place {
+    placeNumber: Int
+}
+
+type Booking {
+    id: ID
+    showId: ID
+    filmName: String
+    firstName: String
+    lastName: String
+    email: String
+    phoneNumber: String
+    places: [Place]
+}
+
+type Film {
+    id: ID
+    filmName: String
+    filmDesc: String
+}
+
+type MovieShow {
+    id: ID
+    film: Film
+    price: Int
+}
+
+type Query {
+    getBooking(id: Int): Booking
+    getAllMovieShows: [MovieShow]
+    findAllByKeyWords(keys: [String]): [Film]!
+}
+

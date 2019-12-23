@@ -19,6 +19,9 @@ service BookingService {
 
   // try to make booking for film
   rpc MakeBooking(BookingRequest) returns (BookingResponse) {}
+
+  // get booking by id
+  rpc GetBooking(BookingRequest) returns (BookingResponse) {}
 }
 
 message DeleteResponse {

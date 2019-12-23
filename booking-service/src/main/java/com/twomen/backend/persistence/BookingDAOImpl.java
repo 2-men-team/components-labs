@@ -63,6 +63,14 @@ public class BookingDAOImpl implements BookingDAO {
   }
 
   @Override
+  public Booking getBooking(int id) {
+    Session session = getSession();
+    Query<Booking> query = session.createQuery("from Booking where booking_id=:id", Booking.class);
+    query.setParameter("id", id);
+    return getSingleResult(query, "Booking with id '" + id + "' was not found.");
+  }
+
+  @Override
   public Booking makeBooking(Booking info) {
     Session session = getSession();
     session.beginTransaction();
